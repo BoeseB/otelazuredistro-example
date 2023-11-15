@@ -6,7 +6,7 @@
       "launchUrl": "weatherforecast",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=ae384768-d461-4663-9c23-63627b7a6968;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/"
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "<Add your ApplicationInsights Instrumentation Key>"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5031"
