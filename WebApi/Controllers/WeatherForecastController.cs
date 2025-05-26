@@ -36,14 +36,13 @@ namespace WebApi.Controllers
             }
         }
 
-
         private async Task<WeatherForecast> CalculateWeatherData(int day)
         {
             // Create a Span tracing execution time of the contained code.
             using var activity = DiagnosticsConfig.ActivitySource.StartActivity();
             activity?.AddTag("day", day); // Add context to span. Call needs to be null safe as activity can be null if tracing is disabled.
 
-            // Set dynamic context that is attached to every log contained in scope
+            // Set dynamic context that is attached to every log contained in scope. (Not exportet unsless explicitly configured in loggign confguration)
             using var scope = _logger.BeginScope(new Dictionary<string, object>()
             {
                 { "some.meta.info", "my context info" }
