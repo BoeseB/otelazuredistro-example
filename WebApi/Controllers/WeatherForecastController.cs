@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Services;
@@ -19,6 +20,7 @@ namespace WebApi.Controllers
             {
                 return BadRequest("City name is required");
             }
+            Activity.Current?.AddTag("city", city);
 
             try
             {
@@ -55,6 +57,7 @@ namespace WebApi.Controllers
             {
                 return BadRequest("City name is required");
             }
+            Activity.Current?.AddTag("city", city);
 
             try
             {
