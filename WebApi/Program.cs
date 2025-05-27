@@ -1,6 +1,7 @@
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
+using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ if (useOtlpExporter)
     builder.Services.AddOpenTelemetry().UseOtlpExporter(); // Add OTLP exporter as second sink for demo multiple simultaneous sinks
 }
 
+builder.Services.AddHttpClient<OpenWeatherClient>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
