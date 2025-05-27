@@ -12,17 +12,6 @@ namespace WebApi.Controllers
     {
         private static readonly Counter<int> WeatherCityCounter = DiagnosticsConfig.Meter.CreateCounter<int>("weather-requests-by-city");
 
-        private static readonly string[] Summaries =
-        [
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        ];
-
-        [HttpGet("random/{city}")]
-        public async Task<IEnumerable<WeatherForecast>> Get(string city)
-        {
-            return await GetFiveDayForecast(city).ToArrayAsync();
-        }
-
         [HttpGet("current/{city}")]
         public async Task<ActionResult<WeatherForecast>> GetCurrent(string city)
         {
@@ -108,6 +97,17 @@ namespace WebApi.Controllers
             }
         }
 
+        private static readonly string[] Summaries =
+        [
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        ];
+
+        [HttpGet("random/{city}")]
+        public async Task<IEnumerable<WeatherForecast>> Get(string city)
+        {
+            return await GetFiveDayForecast(city).ToArrayAsync();
+        }
+        
         private async IAsyncEnumerable<WeatherForecast> GetFiveDayForecast(string city)
         {
             for (int day = 1; day <= 5; day++)
