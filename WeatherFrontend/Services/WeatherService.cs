@@ -15,6 +15,7 @@ public class WeatherService
 
     public async Task<WeatherForecast?> GetCurrentWeatherAsync(string city)
     {
+        _logger.LogInformation("Get current weather for {City}", city);
         try
         {
             return await _httpClient.GetFromJsonAsync<WeatherForecast>($"weatherforecast/current/{city}");
@@ -28,6 +29,7 @@ public class WeatherService
 
     public async Task<IEnumerable<WeatherForecast>?> GetForecastAsync(string city)
     {
+        _logger.LogInformation("Get weather forecast for {City}", city);
         try
         {
             return await _httpClient.GetFromJsonAsync<IEnumerable<WeatherForecast>>($"weatherforecast/forecast/{city}");
