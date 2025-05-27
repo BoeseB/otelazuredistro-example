@@ -5,12 +5,13 @@ namespace WeatherUI.Services;
 public class WeatherService
 {
     private readonly HttpClient _httpClient;
+    private readonly ILogger<WeatherService> _logger;
     private readonly string _apiBaseUrl = "http://localhost:5031/";
 
-    public WeatherService(HttpClient httpClient)
+    public WeatherService(HttpClient httpClient, ILogger<WeatherService> logger)
     {
         _httpClient = httpClient;
-        // Die Basis-URL auf die WebAPI setzen
+        _logger = logger;
         _httpClient.BaseAddress = new Uri(_apiBaseUrl);
     }
 
@@ -25,7 +26,7 @@ public class WeatherService
         }
         catch (Exception)
         {
-            // Im Produktivcode sollte hier geloggt werden
+            _logger.LogError("Fehler beim Abrufen der aktuellen Wetterdaten für {city}", city);
             return null;
         }
     }
@@ -41,7 +42,7 @@ public class WeatherService
         }
         catch (Exception)
         {
-            // Im Produktivcode sollte hier geloggt werden
+            _logger.LogError("Fehler beim Abrufen der Wettervorhersage für {city}", city);
             return null;
         }
     }
