@@ -8,7 +8,7 @@ namespace WebApi.Controllers
     [Route("[controller]")]
     public partial class WeatherForecastController : ControllerBase
     {
-        private static Counter<int> _weatherTypeCounter = DiagnosticsConfig.Meter.CreateCounter<int>("weather-summaries");
+        private static readonly Counter<int> WeatherCityCounter = DiagnosticsConfig.Meter.CreateCounter<int>("weather-requests-by-city");
 
         private readonly ILogger<WeatherForecastController> _logger;
 
@@ -23,24 +23,25 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<WeatherForecast>> Get()
+        public async Task<IEnumerable<WeatherForecast>> Get(string city)
         {
-            return await GetFiveDayForecast().ToArrayAsync();
+            return await GetFiveDayForecast(city).ToArrayAsync();
         }
 
-        private async IAsyncEnumerable<WeatherForecast> GetFiveDayForecast()
+        private async IAsyncEnumerable<WeatherForecast> GetFiveDayForecast(string city)
         {
             for (int day = 1; day <= 5; day++)
             {
-                yield return await CalculateWeatherData(day);
+                yield return await CalculateWeatherData(city, day);
             }
         }
 
-        private async Task<WeatherForecast> CalculateWeatherData(int day)
+        private async Task<WeatherForecast> CalculateWeatherData(string city, int day)
         {
             // Create a Span tracing execution time of the contained code.
             using var activity = DiagnosticsConfig.ActivitySource.StartActivity();
             activity?.AddTag("day", day); // Add context to span. Call needs to be null safe as activity can be null if tracing is disabled.
+            activity?.AddTag("citiy", city);
 
             // Set dynamic context that is attached to every log contained in scope. (Not exportet unsless explicitly configured in loggign confguration)
             using var scope = _logger.BeginScope(new Dictionary<string, object>()
@@ -58,13 +59,14 @@ namespace WebApi.Controllers
             await Task.Delay(Random.Shared.Next(10, 30)); 
             var forecast = new WeatherForecast
             {
+                City = city,
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(day)),
                 TemperatureC = Random.Shared.Next(-20, 55),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             };
 
-            // Count forecasts by weather type.
-            _weatherTypeCounter.Add(1, new KeyValuePair<string, object?>("weather.type", forecast.Summary)); 
+            // Count forecasts by city
+            WeatherCityCounter.Add(1, new KeyValuePair<string, object?>("weather.city", city));
             return forecast;
         }
 
