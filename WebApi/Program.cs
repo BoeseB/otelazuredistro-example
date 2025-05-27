@@ -30,12 +30,29 @@ if (useOtlpExporter)
     builder.Services.AddOpenTelemetry().UseOtlpExporter(); // Add OTLP exporter as second sink for demo multiple simultaneous sinks
 }
 
+// Register HttpClient and OpenWeatherClient
 builder.Services.AddHttpClient<OpenWeatherClient>();
+builder.Services.AddScoped<OpenWeatherClient>();
+
 builder.Services.AddControllers();
+
+// CORS-Konfiguration hinzufügen
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5207") // Anpassen an den Port der Blazor-App
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+// CORS aktivieren
+app.UseCors("AllowBlazorApp");
 
 app.UseAuthorization();
 

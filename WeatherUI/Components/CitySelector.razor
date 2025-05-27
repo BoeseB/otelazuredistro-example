@@ -1,0 +1,45 @@
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="city-selector mb-4">
+    <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator />
+        <div class="input-group">
+            <InputText id="cityInput" class="form-control" @bind-Value="model.City" placeholder="Stadt eingeben..." />
+            <button type="submit" class="btn btn-primary">
+                <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Wetter anzeigen
+            </button>
+        </div>
+        <ValidationMessage For="@(() => model.City)" class="text-danger" />
+    </EditForm>
+</div>
+
+@code {
+    private CityInputModel model = new();
+
+    [Parameter]
+    public string? City { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnCitySelected { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(City))
+        {
+            model.City = City;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        await OnCitySelected.InvokeAsync(model.City);
+    }
+
+    private class CityInputModel
+    {
+        [Required(ErrorMessage = "Bitte geben Sie einen Städtenamen ein.")]
+        [StringLength(100, ErrorMessage = "Der Stadtname ist zu lang.")]
+        public string City { get; set; } = string.Empty;
+    }
+}

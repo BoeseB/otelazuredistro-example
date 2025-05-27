@@ -1,0 +1,84 @@
+@page "/current-weather"
+@using WeatherUI.Services
+@using WeatherUI.Components
+@inject WeatherService WeatherService
+
+<PageTitle>Aktuelles Wetter</PageTitle>
+
+<h1>Aktuelles Wetter</h1>
+
+<CitySelector City="@city" OnCitySelected="@HandleCitySelected" />
+
+@if (isLoading)
+{
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Laden...</span>
+        </div>
+    </div>
+}
+else if (weatherData != null)
+{
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3>@weatherData.City</h3>
+            <p class="mb-0">@weatherData.Date.ToString("d. MMMM yyyy")</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>@weatherData.Summary</h4>
+                    <div class="display-4 mb-3">@weatherData.TemperatureC°C</div>
+                </div>
+                <div class="col-md-6 text-center">
+                    @* Hier könnte ein Wettersymbol basierend auf dem Summary angezeigt werden *@
+                    <span class="oi oi-sun display-1" aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+else if (!string.IsNullOrEmpty(city))
+{
+    <div class="alert alert-info" role="alert">
+        Keine Daten gefunden für "@city".
+    </div>
+}
+
+@code {
+    private string? city;
+    private WeatherForecast? weatherData;
+    private bool isLoading;
+    private string? errorMessage;
+
+    private async Task HandleCitySelected(string selectedCity)
+    {
+        try
+        {
+            city = selectedCity;
+            errorMessage = null;
+            isLoading = true;
+            
+            weatherData = await WeatherService.GetCurrentWeatherAsync(city);
+            
+            if (weatherData == null)
+            {
+                errorMessage = $"Wetterdaten für '{city}' konnten nicht abgerufen werden.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Fehler: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

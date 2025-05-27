@@ -5,6 +5,8 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{781015BC-F23F-4759-9BC0-81DD29107FA3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherUI", "WeatherUI\WeatherUI.csproj", "{4C665220-8542-4876-AB5E-361B3845660F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{781015BC-F23F-4759-9BC0-81DD29107FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{781015BC-F23F-4759-9BC0-81DD29107FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{781015BC-F23F-4759-9BC0-81DD29107FA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C665220-8542-4876-AB5E-361B3845660F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C665220-8542-4876-AB5E-361B3845660F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C665220-8542-4876-AB5E-361B3845660F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C665220-8542-4876-AB5E-361B3845660F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

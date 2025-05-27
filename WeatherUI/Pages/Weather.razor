@@ -1,0 +1,89 @@
+﻿@page "/forecast"
+@using WeatherUI.Services
+@using WeatherUI.Components
+@inject WeatherService WeatherService
+
+<PageTitle>Wettervorhersage</PageTitle>
+
+<h1>5-Tage-Wettervorhersage</h1>
+
+<CitySelector City="@city" OnCitySelected="@HandleCitySelected" />
+
+@if (isLoading)
+{
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Laden...</span>
+        </div>
+    </div>
+}
+else if (forecastData != null && forecastData.Any())
+{
+    <div class="row">
+        @foreach (var forecast in forecastData)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">@forecast.Date.ToString("d. MMM")</h5>
+                    </div>
+                    <div class="card-body">
+                        <h4>@forecast.Summary</h4>
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="display-6">@forecast.TemperatureC°C</div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <span class="oi oi-sun" style="font-size: 2rem;" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+else if (!string.IsNullOrEmpty(city))
+{
+    <div class="alert alert-info" role="alert">
+        Keine Vorhersagedaten gefunden für "@city".
+    </div>
+}
+
+@code {
+    private string? city;
+    private IEnumerable<WeatherForecast>? forecastData;
+    private bool isLoading;
+    private string? errorMessage;
+
+    private async Task HandleCitySelected(string selectedCity)
+    {
+        try
+        {
+            city = selectedCity;
+            errorMessage = null;
+            isLoading = true;
+            
+            forecastData = await WeatherService.GetForecastAsync(city);
+            
+            if (forecastData == null || !forecastData.Any())
+            {
+                errorMessage = $"Vorhersagedaten für '{city}' konnten nicht abgerufen werden.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Fehler: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
