@@ -1,0 +1,75 @@
+@page
+@model WeatherForecastModel
+@{
+    ViewData["Title"] = "5-Tage-Wettervorhersage";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Startseite</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">5-Tage-Vorhersage</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    @if (Model.City == null)
+    {
+        <div class="alert alert-warning">
+            <p>Bitte wählen Sie eine Stadt auf der Startseite aus.</p>
+            <a href="/" class="btn btn-primary">Zurück zur Startseite</a>
+        </div>
+    }
+    else if (Model.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            <h4>Fehler</h4>
+            <p>@Model.ErrorMessage</p>
+            <a href="/" class="btn btn-primary">Zurück zur Startseite</a>
+        </div>
+    }
+    else if (Model.Forecast != null && Model.Forecast.Any())
+    {
+        <h2 class="mb-4">5-Tage-Vorhersage für @Model.City</h2>
+        
+        <div class="row">
+            @foreach (var day in Model.Forecast)
+            {
+                <div class="col-md-4 col-lg mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">@day.Date.ToString("ddd, d. MMM")</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            @{
+                                var weatherIconClass = day.Summary?.ToLower() switch
+                                {
+                                    "clear" => "bi-sun text-warning",
+                                    "clouds" => "bi-cloud text-secondary",
+                                    "rain" => "bi-cloud-rain text-primary",
+                                    "snow" => "bi-snow text-info",
+                                    "thunderstorm" => "bi-cloud-lightning-rain",
+                                    "drizzle" => "bi-cloud-drizzle text-info",
+                                    "mist" or "fog" => "bi-cloud-fog text-secondary",
+                                    _ => "bi-thermometer-half text-danger"
+                                };
+                            }
+                            <i class="bi @weatherIconClass" style="font-size: 3rem;"></i>
+                            <h3 class="my-3">@day.Summary</h3>
+                            <div class="display-6">@day.TemperatureC°C</div>
+                            <div class="text-muted">@day.TemperatureF°F</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <div class="mt-3">
+            <a href="/" class="btn btn-primary">Zurück zur Stadtauswahl</a>
+            <a href="/CurrentWeather?city=@Model.City" class="btn btn-secondary">Aktuelles Wetter</a>
+        </div>
+    }
+</div>

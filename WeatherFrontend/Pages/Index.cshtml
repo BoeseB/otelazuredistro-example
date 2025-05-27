@@ -1,0 +1,55 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Wetter App";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Wetter App</h1>
+    <p class="lead">Wählen Sie eine Stadt, um das aktuelle Wetter oder die Vorhersage zu sehen.</p>
+</div>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center mb-4">Stadt auswählen</h5>
+                
+                <div class="form-group mb-4">
+                    <select id="citySelect" class="form-select form-select-lg" asp-for="SelectedCity" asp-items="Model.Cities">
+                        <option value="">-- Stadt wählen --</option>
+                    </select>
+                </div>
+                
+                <div class="d-grid gap-3">
+                    <a id="currentWeatherBtn" href="#" class="btn btn-primary btn-lg disabled">Aktuelles Wetter</a>
+                    <a id="forecastBtn" href="#" class="btn btn-secondary btn-lg disabled">5-Tage-Vorhersage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const citySelect = document.getElementById('citySelect');
+            const currentBtn = document.getElementById('currentWeatherBtn');
+            const forecastBtn = document.getElementById('forecastBtn');
+            
+            citySelect.addEventListener('change', function() {
+                const city = this.value;
+                if (city) {
+                    currentBtn.href = `/CurrentWeather?city=${encodeURIComponent(city)}`;
+                    forecastBtn.href = `/WeatherForecast?city=${encodeURIComponent(city)}`;
+                    
+                    currentBtn.classList.remove('disabled');
+                    forecastBtn.classList.remove('disabled');
+                } else {
+                    currentBtn.classList.add('disabled');
+                    forecastBtn.classList.add('disabled');
+                }
+            });
+        });
+    </script>
+}
