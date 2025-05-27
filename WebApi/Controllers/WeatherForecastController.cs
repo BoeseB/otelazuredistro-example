@@ -6,21 +6,14 @@ namespace WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public partial class WeatherForecastController : ControllerBase
+    public partial class WeatherForecastController(ILogger<WeatherForecastController> logger) : ControllerBase
     {
         private static readonly Counter<int> WeatherCityCounter = DiagnosticsConfig.Meter.CreateCounter<int>("weather-requests-by-city");
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
-        {
-            _logger = logger;
-        }
+        private static readonly string[] Summaries =
+        [
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        ];
 
         [HttpGet]
         public async Task<IEnumerable<WeatherForecast>> Get(string city)
@@ -44,15 +37,15 @@ namespace WebApi.Controllers
             activity?.AddTag("citiy", city);
 
             // Set dynamic context that is attached to every log contained in scope. (Not exportet unsless explicitly configured in loggign confguration)
-            using var scope = _logger.BeginScope(new Dictionary<string, object>()
+            using var scope = logger.BeginScope(new Dictionary<string, object>()
             {
                 { "some.meta.info", "my context info" }
             });
             // Logging
             // DO NOT use string interpolation. Needs regex for analysis. Wastes process memory, because of new string every time.
-            _logger.LogInformation($"Weather forecast for day {day}");
+            logger.LogInformation($"Weather forecast for day {day}");
             // Ok. Better analysis. No memory pressure. Performance hit because parameters are boxed and unboxed in object type.
-            _logger.LogInformation("Weather forecast for day {day}", day);
+            logger.LogInformation("Weather forecast for day {day}", day);
             // Optimized logging for performance critical parts
             LogWeatherForecast(day); 
 
