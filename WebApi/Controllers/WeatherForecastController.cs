@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,18 +35,7 @@ namespace WebApi.Controllers
             activity?.AddTag("day", day); // Add context to span. Call needs to be null safe as activity can be null if tracing is disabled.
             activity?.AddTag("citiy", city);
 
-            // Set dynamic context that is attached to every log contained in scope. (Not exportet unsless explicitly configured in loggign confguration)
-            using var scope = logger.BeginScope(new Dictionary<string, object>()
-            {
-                { "some.meta.info", "my context info" }
-            });
-            // Logging
-            // DO NOT use string interpolation. Needs regex for analysis. Wastes process memory, because of new string every time.
-            logger.LogInformation($"Weather forecast for day {day}");
-            // Ok. Better analysis. No memory pressure. Performance hit because parameters are boxed and unboxed in object type.
-            logger.LogInformation("Weather forecast for day {day}", day);
-            // Optimized logging for performance critical parts
-            LogWeatherForecast(day); 
+            LogWeatherForecast(city, day); 
 
             await Task.Delay(Random.Shared.Next(10, 30)); 
             var forecast = new WeatherForecast
@@ -68,6 +56,6 @@ namespace WebApi.Controllers
         /// Containing class needs to be partial. 
         /// </summary>
         [LoggerMessage(0, LogLevel.Information, "Weather forecast for day {day}")]
-        private partial void LogWeatherForecast(int day);
+        private partial void LogWeatherForecast(string city, int day);
     }
 }

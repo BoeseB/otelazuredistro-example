@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddOpenTelemetry(logging =>
 {
     logging.IncludeFormattedMessage = true; // Log template Message with placeholders, this allows for easier queries of all similar logs
-    logging.IncludeScopes = true; // Enable logging of properties defined in ILogger.BeginScope
 });
 
 builder.Services.AddOpenTelemetry()
