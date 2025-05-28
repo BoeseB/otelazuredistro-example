@@ -1,27 +1,28 @@
 @using System.ComponentModel.DataAnnotations
+@using BlazorApplicationInsights.Interfaces
+@using BlazorApplicationInsights.Models
 @using Microsoft.AspNetCore.Components.Forms
 
 <div class="city-selector mb-4">
     <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
-        <DataAnnotationsValidator />
+        <DataAnnotationsValidator/>
         <div class="input-group">
-            <InputText id="cityInput" class="form-control" @bind-Value="model.City" placeholder="Stadt eingeben..." />
+            <InputText id="cityInput" class="form-control" @bind-Value="model.City" placeholder="Stadt eingeben..."/>
             <button type="submit" class="btn btn-primary">
                 <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Wetter anzeigen
             </button>
         </div>
-        <ValidationMessage For="@(() => model.City)" class="text-danger" />
+        <ValidationMessage For="@(() => model.City)" class="text-danger"/>
     </EditForm>
 </div>
 
 @code {
+    [Inject] private IApplicationInsights AppInsights { get; set; }
     private CityInputModel model = new();
 
-    [Parameter]
-    public string? City { get; set; }
+    [Parameter] public string? City { get; set; }
 
-    [Parameter]
-    public EventCallback<string> OnCitySelected { get; set; }
+    [Parameter] public EventCallback<string> OnCitySelected { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -33,6 +34,14 @@
 
     private async Task HandleSubmit()
     {
+        await AppInsights.TrackEvent(new EventTelemetry
+        {
+            Name = "City was selected",
+            Properties = new Dictionary<string, object?>
+            {
+                ["City"] = model.City
+            }
+        });
         await OnCitySelected.InvokeAsync(model.City);
     }
 
@@ -42,4 +51,5 @@
         [StringLength(100, ErrorMessage = "Der Stadtname ist zu lang.")]
         public string City { get; set; } = string.Empty;
     }
+
 }
