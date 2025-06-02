@@ -38,7 +38,8 @@ namespace WebApi.Controllers
                     Summary = weatherData.Weather?.FirstOrDefault()?.Main ?? "Unknown"
                 };
 
-                LogWeather(city, forecast.Summary, forecast.TemperatureC);
+                CustomEvent("CurrentWeather", city, forecast.Summary, forecast.TemperatureC);
+                
                 // Count forecasts by city
                 WeatherCityCounter.Add(1, new KeyValuePair<string, object?>("weather.city", city));
 
@@ -149,8 +150,10 @@ namespace WebApi.Controllers
         /// </summary>
         [LoggerMessage(0, LogLevel.Information, "Weather forecast for day {day}")]
         private partial void LogWeatherForecast(string city, int day);
-        
-        [LoggerMessage(0, LogLevel.Information, "Weather in {city} is {weather}")]
-        private partial void LogWeather(string city, string weather, int temperature);
+
+        private void CustomEvent(string myEvent, string city, string weather, int temperature)
+        {
+            logger.LogInformation("{microsoft.custom_event.name} {city} {weather} {temperature}", myEvent, city, weather, temperature);
+        }
     }
 }
