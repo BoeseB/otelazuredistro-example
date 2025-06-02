@@ -47,21 +47,12 @@ public class WeatherService
         // Für dieses Beispiel verwenden wir eine vordefinierte Liste
         return await Task.FromResult(new List<string> 
         { 
-            "Berlin", 
-            "Hamburg", 
-            "München", 
-            "Köln", 
-            "Frankfurt",
+            "Karlsruhe",
             "Stuttgart",
-            "Düsseldorf",
-            "Leipzig",
-            "Dortmund",
-            "Essen",
-            "New York",
-            "London",
-            "Paris",
-            "Tokyo",
-            "Sydney"
+            "Pforzheim",
+            "Heidelberg",
+            "Kaiserslautern",
+            "Mannheim"
         });
     }
 }
